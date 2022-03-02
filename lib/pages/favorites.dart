@@ -1,4 +1,3 @@
-
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,69 +8,62 @@ import 'package:music_player_project/pages/playing_screen.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:on_audio_room/on_audio_room.dart';
 
-class FavoritePage extends StatefulWidget {
+import '../controllers/favorites.dart';
+
+class FavoritePage extends StatelessWidget {
   FavoritePage({Key? key}) : super(key: key);
 
-  @override
-  State<FavoritePage> createState() => _FavoritePageState();
-}
-
-class _FavoritePageState extends State<FavoritePage> {
   final List<Audio> convertList = [];
 
   final OnAudioRoom _audioRoom = OnAudioRoom();
-
-
-  
 
   @override
   Widget build(BuildContext context) {
     Get.put(FavoritesController());
     Get.put(HomeController());
 
- 
-
     return Scaffold(
       appBar: buildAppBar(),
-      body: FutureBuilder<List<FavoritesEntity>>(
-          future: OnAudioRoom().queryFavorites(
-            limit: 100,
-            // reverse: false,
-          ),
-          builder: (context, item) {
-            if (item.data == null) {
-              return const Center(child: CircularProgressIndicator());
-            }
+      body: GetBuilder<FavoritesController>(builder: (_) {
+        return FutureBuilder<List<FavoritesEntity>>(
+            future: OnAudioRoom().queryFavorites(
+              limit: 100,
+              // reverse: false,
+            ),
+            builder: (context, item) {
+              if (item.data == null) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-            if (item.data!.isEmpty) {
-              return Center(
-                child: AnimatedTextKit(
-                  repeatForever: true,
-                  animatedTexts: [
-                    WavyAnimatedText('No Songs',
-                        textStyle: TextStyle(fontSize: 15)),
-                    // WavyAnimatedText('Add songs to Favourites'),
-                  ],
-                ),
-              );
-            }
+              if (item.data!.isEmpty) {
+                return Center(
+                  child: AnimatedTextKit(
+                    repeatForever: true,
+                    animatedTexts: [
+                      WavyAnimatedText('No Songs',
+                          textStyle: TextStyle(fontSize: 15)),
+                      // WavyAnimatedText('Add songs to Favourites'),
+                    ],
+                  ),
+                );
+              }
 
-            List<FavoritesEntity> favorites = item.data!;
+              List<FavoritesEntity> favorites = item.data!;
 
-            return ListView.builder(
-              itemCount: favorites.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.white24,
-                    ),
-                    height: MediaQuery.of(context).size.height * 0.08,
-                    child: Center(
-                      child: GetBuilder<HomeController>(
-                        builder: (controller) => ListTile(
+              return ListView.builder(
+                itemCount: favorites.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding:
+                        const EdgeInsets.only(left: 10, right: 10, top: 10),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.white24,
+                      ),
+                      height: MediaQuery.of(context).size.height * 0.08,
+                      child: Center(
+                        child: ListTile(
                           iconColor: Colors.red.shade900,
                           // =================================================================
                           leading:
@@ -82,7 +74,11 @@ class _FavoritePageState extends State<FavoritePage> {
                             maxLines: 2,
                           ),
                           // ==================================================================
-                          trailing: buildListTileTrailing(favorites, index),
+                          trailing: buildListTileTrailing(
+                            favorites,
+                            index,
+                            context,
+                          ),
                           // ================================================================
                           onTap: () {
                             convertAudioFile(favorites);
@@ -90,18 +86,18 @@ class _FavoritePageState extends State<FavoritePage> {
                               PlayingScreen(
                                 index: index,
                                 convertedList: convertList,
-                                songs: controller.fechsongsall,
+                                songs: Get.find<HomeController>().fechsongsall,
                               ),
                             );
                           },
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
-            );
-          }),
+                  );
+                },
+              );
+            });
+      }),
     );
   }
 
@@ -142,49 +138,43 @@ class _FavoritePageState extends State<FavoritePage> {
   }
 
   // ==============================================================================
-  buildListTileTrailing(favorites, index) {
-    return GetBuilder<FavoritesController>(
-      builder: (control) {
-        return IconButton(
-          onPressed: () async {
-            showDialog(
-                context: context,
-                builder: (BuildContext context) => CupertinoAlertDialog(
-                      title: Text("Remove Song ?"),
-                      content: Text("Are you sure ?"),
-                      actions: <Widget>[
-                        CupertinoDialogAction(
-                          onPressed: () async {
-                            await _audioRoom.deleteFrom(
-                              RoomType.FAVORITES,
-                              favorites[index].key,
-                            );
-                            Get.back();
-                            setState(() {});
-                          },
-                          isDefaultAction: true,
-                          child: Text(
-                            'Yes',
-                            style: TextStyle(color: Colors.green.shade600),
-                          ),
-                        ),
-                        CupertinoDialogAction(
-                          onPressed: () => Get.back(),
-                          child: Text(
-                            "No",
-                            style: TextStyle(color: Colors.red.shade600),
-                          ),
-                        )
-                      ],
-                    ));
-            // controller.iconChanging(index);
-
-            // control.deleteSong(favorites, index);
-          },
-          icon: Icon(
-            Icons.favorite,
-          ),
-        );
+  buildListTileTrailing(favorites, index, BuildContext context) {
+    return GestureDetector(
+      child: Text('Remove'),
+      onTap: () {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) => CupertinoAlertDialog(
+                  title: Text("Remove Song ?"),
+                  content: Text("Are you sure ?"),
+                  actions: <Widget>[
+                    CupertinoDialogAction(
+                      onPressed: () async {
+                        Get.find<FavoritesController>()
+                            .songsDeleteFromFavorites(
+                                index: index, favorites: favorites);
+                        // await _audioRoom.deleteFrom(
+                        //   RoomType.FAVORITES,
+                        //   favorites[index].key,
+                        // );
+                        Get.back();
+                        // setState(() {});
+                      },
+                      isDefaultAction: true,
+                      child: Text(
+                        'Yes',
+                        style: TextStyle(color: Colors.green.shade600),
+                      ),
+                    ),
+                    CupertinoDialogAction(
+                      onPressed: () => Get.back(),
+                      child: Text(
+                        "No",
+                        style: TextStyle(color: Colors.red.shade600),
+                      ),
+                    )
+                  ],
+                ));
       },
     );
   }

@@ -340,33 +340,21 @@ class HomeController extends GetxController {
 
 }
 
-class PlayListController extends GetxController {
-  List<String> playListNameList = [];
-  OnAudioRoom audioRoom = OnAudioRoom();
 
-  // updateScreen() {
-  //   update();
-  // }
-
-  creatingPlaylistName(value) {
-    audioRoom.createPlaylist(value);
-    update();
-  }
-}
 
 // =========================================================================================
 // This class used to controling the favorites page.
 
-class FavoritesController extends GetxController {
-  OnAudioRoom audioRoom = OnAudioRoom();
-  deleteSong(favorites, index) async {
-    update();
-    await audioRoom.deleteFrom(
-      RoomType.FAVORITES,
-      favorites[index].key,
-    );
-  }
-}
+// class FavoritesController extends GetxController {
+//   OnAudioRoom audioRoom = OnAudioRoom();
+//   deleteSong(favorites, index) async {
+//     update();
+//     await audioRoom.deleteFrom(
+//       RoomType.FAVORITES,
+//       favorites[index].key,
+//     );
+//   }
+// }
 
 class BottomNavbarControlls extends GetxController {
   var currentIndex = 0;

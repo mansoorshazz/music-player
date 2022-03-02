@@ -16,9 +16,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   OnAudioRoom().initRoom();
-  // await Hive.initFlutter();
-  // Hive.registerAdapter(SongsModelAdapter());
-  // await Hive.openBox(dbname);
+
   runApp(MyApp());
 }
 

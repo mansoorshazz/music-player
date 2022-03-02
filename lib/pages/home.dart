@@ -1,25 +1,12 @@
-// ignore_for_file: must_be_immutable, prefer_const_constructors
-
 import 'package:assets_audio_player/assets_audio_player.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:music_player_project/database/database.dart';
-// import 'package:hive_flutter/hive_flutter.dart';
-// import 'package:music_player/database/database.dart';
-// import 'package:music_player/main.dart';
-
 import 'package:music_player_project/getxfunctions.dart';
-
 import 'package:music_player_project/pages/playing_screen.dart';
-
 import 'package:music_player_project/pages/songs_add_to_playlist.dart';
-
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:on_audio_room/on_audio_room.dart';
-
 import 'search.dart';
 
 class Home extends StatelessWidget {
@@ -206,7 +193,12 @@ class Home extends StatelessWidget {
               ),
               IconButton(
                   onPressed: () {
-                    Get.to(SongsAddToPlaylist(songs: songs, songsIndex: index));
+                    Get.to(
+                      SongsAddToPlaylist(
+                        songs: songs,
+                        songsIndex: index,
+                      ),
+                    );
                   },
                   icon: Icon(Icons.playlist_add),
                   color: Colors.white)

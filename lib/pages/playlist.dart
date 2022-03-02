@@ -2,19 +2,15 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:music_player_project/controllers/playlist.dart';
 // import 'package:hive_generator/hive_generator.dart';
 import 'package:music_player_project/getxfunctions.dart';
 import 'package:on_audio_room/on_audio_room.dart';
 import 'playlist_songs.dart';
 
-class PlayList extends StatefulWidget {
+class PlayList extends StatelessWidget {
   PlayList({Key? key}) : super(key: key);
 
-  @override
-  State<PlayList> createState() => _PlayListState();
-}
-
-class _PlayListState extends State<PlayList> {
   final OnAudioRoom audioRoom = OnAudioRoom();
 
   final formKey = GlobalKey<FormState>();
@@ -36,66 +32,68 @@ class _PlayListState extends State<PlayList> {
         centerTitle: true,
       ),
       floatingActionButton: creatingPlayList(playlistNameController),
-      body: FutureBuilder<List<PlaylistEntity>>(
-        future: OnAudioRoom().queryPlaylists(),
-        builder: (context, item) {
-          // ==============================================
+      body: GetBuilder<PlayListController>(builder: (context) {
+        return FutureBuilder<List<PlaylistEntity>>(
+          future: OnAudioRoom().queryPlaylists(),
+          builder: (context, item) {
+            // ==============================================
 
-          if (item.data == null) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          if (item.data!.isEmpty) {
-            return Center(
-              child: AnimatedTextKit(
-                repeatForever: true,
-                animatedTexts: [
-                  WavyAnimatedText(
-                    'No Playlists',
-                    textStyle: const TextStyle(fontSize: 15),
-                  ),
-                  // WavyAnimatedText('Add songs to Favourites'),
-                ],
-              ),
-            );
-          }
-
-          List<PlaylistEntity> playLists = item.data!;
-
-          // ==============================================
-
-          return ListView.separated(
-            separatorBuilder: (context, index) => const Divider(
-              indent: 28,
-              endIndent: 10,
-            ),
-            itemBuilder: (context, index) {
-              return ListTile(
-                leading: buildPlayListImage(context),
-                // =======================================================================
-                title: Text(playLists[index].playlistName),
-                // =======================================================================
-                subtitle: Text(
-                    '${playLists[index].playlistSongs.length.toString()} Songs'),
-                //=======================================================================
-                trailing: deletePlayList(playLists, index),
-                // =======================================================================
-                onTap: () {
-                  Get.off(
-                    PlayListSongs(
-                      playListName: playLists[index].playlistName,
-                      playListKey: playLists[index].key,
-                    ),
-                  );
-                },
+            if (item.data == null) {
+              return const Center(
+                child: CircularProgressIndicator(),
               );
-            },
-            itemCount: playLists.length,
-          );
-        },
-      ),
+            }
+
+            if (item.data!.isEmpty) {
+              return Center(
+                child: AnimatedTextKit(
+                  repeatForever: true,
+                  animatedTexts: [
+                    WavyAnimatedText(
+                      'No Playlists',
+                      textStyle: const TextStyle(fontSize: 15),
+                    ),
+                    // WavyAnimatedText('Add songs to Favourites'),
+                  ],
+                ),
+              );
+            }
+
+            List<PlaylistEntity> playLists = item.data!;
+
+            // ==============================================
+
+            return ListView.separated(
+              separatorBuilder: (context, index) => const Divider(
+                indent: 28,
+                endIndent: 10,
+              ),
+              itemBuilder: (context, index) {
+                return ListTile(
+                  leading: buildPlayListImage(context),
+                  // =======================================================================
+                  title: Text(playLists[index].playlistName),
+                  // =======================================================================
+                  subtitle: Text(
+                      '${playLists[index].playlistSongs.length.toString()} Songs'),
+                  //=======================================================================
+                  trailing: deletePlayList(playLists, index),
+                  // =======================================================================
+                  onTap: () {
+                    Get.off(
+                      PlayListSongs(
+                        playListName: playLists[index].playlistName,
+                        playListKey: playLists[index].key,
+                      ),
+                    );
+                  },
+                );
+              },
+              itemCount: playLists.length,
+            );
+          },
+        );
+      }),
     );
   }
 
@@ -107,16 +105,16 @@ class _PlayListState extends State<PlayList> {
       // color: Colors.black,
       onPressed: () {
         showDialog(
-            context: context,
+            context: Get.overlayContext!,
             builder: (BuildContext context) => CupertinoAlertDialog(
                   title: Text("Delete The Playlist"),
                   content: Text("Are you sure ?"),
                   actions: <Widget>[
                     CupertinoDialogAction(
                       onPressed: () {
-                        audioRoom.deletePlaylist(playLists[index].key);
+                        final controller = Get.find<PlayListController>();
+                        controller.deletePlaylist(playLists[index].key);
                         Get.back();
-                        setState(() {});
                       },
                       isDefaultAction: true,
                       child: Text(
@@ -176,7 +174,7 @@ class _PlayListState extends State<PlayList> {
   Future<bool?> createPlaylistDilaogue(
       TextEditingController playlistNameController) {
     return showDialog<bool>(
-      context: context,
+      context: Get.overlayContext!,
       builder: (context) {
         return CupertinoAlertDialog(
           title: Text('Create a playlist'),
@@ -215,15 +213,16 @@ class _PlayListState extends State<PlayList> {
               onPressed: () {
                 if (formKey.currentState!.validate()) {
                   Get.back();
-                  audioRoom.createPlaylist(playlistNameController.text);
-                  setState(() {});
+                  final controller = Get.find<PlayListController>();
+                  controller.creatingPlaylistName(playlistNameController.text);
+                  playlistNameController.clear();
                 }
               },
             ),
             CupertinoDialogAction(
               onPressed: () {
                 Get.back();
-                setState(() {});
+                playlistNameController.clear();
               },
               child: Text(
                 "No",

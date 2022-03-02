@@ -1,40 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
-// import 'package:get/get.dart';
-// import 'package:get_storage/get_storage.dart';
+
 import 'package:music_player_project/getxfunctions.dart';
 import 'package:music_player_project/widgets/miniplayer.dart';
 import 'package:share_plus/share_plus.dart';
-
-// class ThemeService extends GetxController {
-//   final _getStorage = GetStorage();
-//   final storageKey = "isDarkMode";
-
-//   ThemeMode getThemeMode() {
-//     return isSavedDarkMode() ? ThemeMode.dark : ThemeMode.light;
-//   }
-
-//   bool isSavedDarkMode() {
-//     return _getStorage.read(storageKey) ?? false;
-//   }
-
-//   void saveThemeMode(bool isDarkMode) {
-//     _getStorage.write(storageKey, isDarkMode);
-//   }
-
-//   void changeThemeMode() {
-//     Get.changeThemeMode(isSavedDarkMode() ? ThemeMode.light : ThemeMode.dark);
-//     saveThemeMode(!isSavedDarkMode());
-//   }
-
-//   @override
-//   void onInit() {
-//     changeThemeMode();
-//     // TODO: implement onInit
-//     super.onInit();
-//   }
-// }
 
 class Settings extends StatelessWidget {
   Settings({Key? key}) : super(key: key);
@@ -52,8 +22,6 @@ class Settings extends StatelessWidget {
       ),
       body: Column(
         children: [
-          //
-          // themChangeListTile(),
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: themChangeListTile(),
@@ -88,7 +56,6 @@ class Settings extends StatelessWidget {
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.05,
           ),
-          
         ],
       ),
     );
@@ -96,18 +63,19 @@ class Settings extends StatelessWidget {
 
   buildShare(context) {
     return ListTile(
-        title: Text('Share App'),
-        trailing: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.12,
-            child: SizedBox(
-              child: Icon(Icons.share),
-            )),
-        onTap: () async {
-          await Share.share(
-            'https://www.instagram.com/__mansoor_shazz__/?hl=en',
-            subject: 'Enjoy the Music App',
-          );
-        });
+      title: Text('Share App'),
+      trailing: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.12,
+          child: SizedBox(
+            child: Icon(Icons.share),
+          )),
+      onTap: () async {
+        await Share.share(
+          'https://play.google.com/store/apps/details?id=in.brototype.music_player_project',
+          subject: 'Enjoy the Music App',
+        );
+      },
+    );
   }
 
   ListTile buildAbout() {

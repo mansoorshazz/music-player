@@ -2,6 +2,7 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:music_player_project/controllers/playlist.dart';
 import 'package:music_player_project/getxfunctions.dart';
 import 'package:music_player_project/pages/bottomnavbar.dart';
 import 'package:music_player_project/pages/songs_add_to_playlist.dart';
@@ -42,11 +43,6 @@ class PlayingScreen extends GetView<PlayingScreenController> {
         leading: IconButton(
             onPressed: () {
               Get.back();
-              // Get.to(
-              //   BottomNavBar(
-              //     visible: true,
-              //   ),
-              // );
             },
             icon: const Icon(Icons.arrow_back)),
         title: const Text('Now Playing'),
